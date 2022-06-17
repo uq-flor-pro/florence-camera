@@ -535,6 +535,39 @@ def spinner():
   buttons[screenMode][4].setBg(None)
   screenModePrior = Mode.UNDEFINED # Force refresh
 
+def callback_recording(indata, frames, time, status):
+    """This is called (from a separate thread) for each audio block."""
+    q.put(indata.copy())
+
+def record_audio(filename):
+    global recording
+
+    # Make sure the file is opened before recording anything:
+    with sf.SoundFile(filename + ".wav", mode='w', samplerate=44100,
+      channels=1,) as file:
+      with sd.InputStream(samplerate=44100, device=0,channels=1,callback=callback_recording):
+        while recording:
+          file.write(q.get())
+
+def is_recording_notification():
+    global recording
+
+	buttons[screenMode][3].setBg('recording')
+	buttons[screenMode][3].draw(screen)
+	pygame.display.update()
+
+	n = 0
+    while recording:
+	  buttons[screenMode][4].setBg('record_' + str(n))
+	  buttons[screenMode][4].draw(screen)
+	  pygame.display.update()
+	  n = (n + 1) % 6
+	  time.sleep(0.15)
+
+	buttons[screenMode][3].setBg(None)
+	buttons[screenMode][4].setBg(None)
+	screenModePrior = -1 # Force refresh
+
 def saveThumbnail(fname,tname):      # fname: filename with extension
   metadata = pyexiv2.ImageMetadata(fname)
   metadata.read()
@@ -589,6 +622,23 @@ def takePicture():
     pygame.display.update()
     time.sleep(2.5)
     loadIdx = len(imgNums)-1
+
+  recording = True
+  img_filename_no_ext = filename[:-4]
+  record = threading.Thread(target=record_audio, args=(img_filename_no_ext))
+  progress = threading.Thread(target=is_recording_notification)
+
+  record.start()
+  progress.start()
+  while btn_not_pressed:
+    sleep(0.1)
+
+  recording = False
+  record.join()
+  progress.join()
+    
+  # TODO implement me
+  cedar_post(filename, img_filename_no_ext + ".wav")
 
 def showNextImage(direction):
   global busy, loadIdx, imgNums
