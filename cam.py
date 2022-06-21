@@ -36,7 +36,7 @@
 # -------------------------------------------------------------------------------
 
 import atexit
-import cPickle as pickle
+import pickle as pickle
 import errno
 import fnmatch
 import io
@@ -117,7 +117,7 @@ class Button:
     self.fg       = None # Foreground Icon name
     self.callback = None # Callback function
     self.value    = None # Value passed to callback
-    for key, value in kwargs.iteritems():
+    for key, value in kwargs.items():
       if   key == 'color': self.color    = value
       elif key == 'bg'   : self.bg       = value
       elif key == 'fg'   : self.fg       = value
@@ -130,10 +130,10 @@ class Button:
     x2 = x1 + self.rect[2] - 1
     y2 = y1 + self.rect[3] - 1
     if ((pos[0] >= x1) and (pos[0] <= x2) and
-	(pos[1] >= y1) and (pos[1] <= y2)):
+  (pos[1] >= y1) and (pos[1] <= y2)):
       if self.callback:
-	if self.value is None: self.callback()
-	else:                  self.callback(self.value)
+        if self.value is None: self.callback()
+        else:                  self.callback(self.value)
       return True
     return False
 
@@ -142,21 +142,21 @@ class Button:
       screen.fill(self.color, self.rect)
     if self.iconBg:
       screen.blit(self.iconBg.bitmap,
-	(self.rect[0]+(self.rect[2]-self.iconBg.bitmap.get_width())/2,
-	 self.rect[1]+(self.rect[3]-self.iconBg.bitmap.get_height())/2))
+  (self.rect[0]+(self.rect[2]-self.iconBg.bitmap.get_width())/2,
+   self.rect[1]+(self.rect[3]-self.iconBg.bitmap.get_height())/2))
     if self.iconFg:
       screen.blit(self.iconFg.bitmap,
-	(self.rect[0]+(self.rect[2]-self.iconFg.bitmap.get_width())/2,
-	 self.rect[1]+(self.rect[3]-self.iconFg.bitmap.get_height())/2))
+  (self.rect[0]+(self.rect[2]-self.iconFg.bitmap.get_width())/2,
+   self.rect[1]+(self.rect[3]-self.iconFg.bitmap.get_height())/2))
 
   def setBg(self, name):
     if name is None:
       self.iconBg = None
     else:
       for i in icons:
-	if name == i.name:
-	  self.iconBg = i
-	  break
+        if name == i.name:
+          self.iconBg = i
+          break
 
 
 # UI callbacks -------------------------------------------------------------
@@ -197,8 +197,8 @@ def viewCallback(n): # Viewfinder buttons
       screenModePrior =  Mode.UNDEFINED
     else:      # Load image
       if len(imgNums):
-	loadIdx = len(imgNums)-1
-	showImage(loadIdx)
+        loadIdx = len(imgNums)-1
+        showImage(loadIdx)
       else: screenMode = Mode.NO_IMAGES
   else: # Rest of screen = shutter
     takePicture()
@@ -223,7 +223,7 @@ def deleteCallback(n): # Delete confirmation
   screenModePrior = Mode.UNDEFINED
   if n is True:
     os.remove(pathData[storeMode] +
-	      '/rpi_' + '%04d' % imgNums[loadIdx] + '.jpg')
+        '/rpi_' + '%04d' % imgNums[loadIdx] + '.jpg')
     os.remove(cacheDir + '/rpi_' + '%04d' % imgNums[loadIdx] + '.jpg')
     del imgNums[loadIdx]
     if len(imgNums):
@@ -248,12 +248,12 @@ def storeModeCallback(n): # Radio buttons on storage settings screen
       # Set new directory ownership to pi user, mode to 755
       os.chown(pathData[storeMode], uid, gid)
       os.chmod(pathData[storeMode],
-	stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR |
-	stat.S_IRGRP | stat.S_IXGRP |
-	stat.S_IROTH | stat.S_IXOTH)
+  stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR |
+  stat.S_IRGRP | stat.S_IXGRP |
+  stat.S_IROTH | stat.S_IXOTH)
     except OSError as e:
       # errno = 2 if can't create folder
-      print errno.errorcode[e.errno]
+      print(errno.errorcode[e.errno])
       raise SystemExit
 
   # read all existing image numbers
@@ -479,11 +479,11 @@ def saveSettings():
     # Use a dictionary (rather than pickling 'raw' values) so
     # the number & order of things can change without breaking.
     d = { 'fx'      : fxMode,
-	  'iso'     : isoMode,
-	  'awb'     : awbMode,
-	  'quality' : qualityMode,
-	  'size'    : sizeMode,
-	  'store'   : storeMode }
+    'iso'     : isoMode,
+    'awb'     : awbMode,
+    'quality' : qualityMode,
+    'size'    : sizeMode,
+    'store'   : storeMode }
     pickle.dump(d, outfile)
     outfile.close()
   except:
@@ -730,7 +730,7 @@ if not os.path.isdir(cacheDir):
       stat.S_IROTH | stat.S_IXOTH)
   except OSError as e:
     # errno = 2 if can't create folder
-    print errno.errorcode[e.errno]
+    print(errno.errorcode[e.errno])
     raise SystemExit
 
 loadSettings() # Must come last; fiddles with Button/Icon states
@@ -756,7 +756,7 @@ while(True):
   if screenMode >= Mode.VIEWFINDER: # Viewfinder or settings modes
     stream = io.BytesIO() # Capture into in-memory stream
     camera.capture(stream, resize=sizeData[sizeMode][1],
-		   use_video_port=True, format='rgb')
+       use_video_port=True, format='rgb')
     stream.seek(0)
     stream.readinto(rgb)
     stream.close()
