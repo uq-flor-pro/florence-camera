@@ -15,3 +15,10 @@ Not that the prereqs have changed compared to the original documentation:
 - python-picam    (current version, tested with 1.8)
 - python-pyexiv2  (new prereq)
 
+## Updated dependency instructions for python3
+``` bash
+sudo apt-get install python3-picamera
+sudo apt install libexiv2-dev libboost-all-dev
+pip install py3exiv2
+python3 -m pip install -U pygame
+```
