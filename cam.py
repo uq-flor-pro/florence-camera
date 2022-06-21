@@ -536,37 +536,37 @@ def spinner():
   screenModePrior = Mode.UNDEFINED # Force refresh
 
 def callback_recording(indata, frames, time, status):
-    """This is called (from a separate thread) for each audio block."""
-    q.put(indata.copy())
+  """This is called (from a separate thread) for each audio block."""
+  q.put(indata.copy())
 
 def record_audio(filename):
-    global recording
+  global recording
 
-    # Make sure the file is opened before recording anything:
-    with sf.SoundFile(filename + ".wav", mode='w', samplerate=44100,
-      channels=1,) as file:
-      with sd.InputStream(samplerate=44100, device=0,channels=1,callback=callback_recording):
-        while recording:
-          file.write(q.get())
+  # Make sure the file is opened before recording anything:
+  with sf.SoundFile(filename + ".wav", mode='w', samplerate=44100,
+    channels=1,) as file:
+    with sd.InputStream(samplerate=44100, device=0,channels=1,callback=callback_recording):
+      while recording:
+        file.write(q.get())
 
 def is_recording_notification():
-    global recording
+  global recording
 
-	buttons[screenMode][3].setBg('recording')
-	buttons[screenMode][3].draw(screen)
-	pygame.display.update()
+  buttons[screenMode][3].setBg('recording')
+  buttons[screenMode][3].draw(screen)
+  pygame.display.update()
 
-	n = 0
-    while recording:
-	  buttons[screenMode][4].setBg('record_' + str(n))
-	  buttons[screenMode][4].draw(screen)
-	  pygame.display.update()
-	  n = (n + 1) % 6
-	  time.sleep(0.15)
+  n = 0
+  while recording:
+    buttons[screenMode][4].setBg('record_' + str(n))
+    buttons[screenMode][4].draw(screen)
+    pygame.display.update()
+    n = (n + 1) % 6
+    time.sleep(0.15)
 
-	buttons[screenMode][3].setBg(None)
-	buttons[screenMode][4].setBg(None)
-	screenModePrior = -1 # Force refresh
+  buttons[screenMode][3].setBg(None)
+  buttons[screenMode][4].setBg(None)
+  screenModePrior = -1 # Force refresh
 
 def saveThumbnail(fname,tname):      # fname: filename with extension
   metadata = pyexiv2.ImageMetadata(fname)
@@ -601,9 +601,9 @@ def takePicture():
     imgSurface  = pygame.image.load(cachename+'.jpg')
     if storeMode == 2: # Dropbox
       if upconfig:
-	cmd = uploader + ' -f ' + upconfig + ' upload ' + filename + ' Photos/' + os.path.basename(filename)
+        cmd = uploader + ' -f ' + upconfig + ' upload ' + filename + ' Photos/' + os.path.basename(filename)
       else:
-	cmd = uploader + ' upload ' + filename + ' Photos/' + os.path.basename(filename)
+        cmd = uploader + ' upload ' + filename + ' Photos/' + os.path.basename(filename)
       call ([cmd], shell=True)
 
   finally:
