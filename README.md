@@ -15,6 +15,8 @@ Not that the prereqs have changed compared to the original documentation:
 - python-picam    (current version, tested with 1.8)
 - python-pyexiv2  (new prereq)
 
+# Beginning to port to python3
+WIP
 ## Updated dependency instructions for python3
 ``` bash
 sudo apt-get install python3-picamera
